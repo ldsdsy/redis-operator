@@ -1,0 +1,6 @@
+apiVersion: redis.my.domain/v1
+kind: RedisStandalone
+metadata:
+  name: redisstandalone-sample
+spec:
+  # TODO(user): Add fields here
