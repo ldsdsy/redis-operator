@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	redisv1 "ldsdsy/redis-operator/api/v1"
-	"ldsdsy/redis-operator/controllers"
+	controllers "ldsdsy/redis-operator/controllers/redisstandalone"
 	//+kubebuilder:scaffold:imports
 )
 

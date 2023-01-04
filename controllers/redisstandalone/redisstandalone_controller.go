@@ -14,12 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package redisstandalone
 
 import (
 	"context"
+	"time"
 
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -51,7 +54,47 @@ func (r *RedisStandaloneReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// TODO(user): your logic here
 
-	return ctrl.Result{}, nil
+	instance := &redisv1.RedisStandalone{}
+	if err := r.Client.Get(context.TODO(), req.NamespacedName, instance); err != nil {
+		if errors.IsNotFound(err) {
+			klog.Errorln("Not found RedisStandalone: ", req.NamespacedName)
+			return ctrl.Result{}, nil
+		}
+		klog.Errorln("Wrong in getting RedisStandalone: ", req.NamespacedName)
+		return ctrl.Result{}, err
+	}
+	labels := map[string]string{
+		"instance": instance.Namespace + "_" + instance.Name,
+	}
+	// config,pvc,deploy,svc
+	if ok, err := r.EnsurerResource(*instance, labels); !ok {
+		klog.Errorln("Wrong in creating resources of ", instance.Name, ", err is ", err)
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+	}
+
+	// checkout status of redis
+	if ok, err := r.CheckStatus(*instance, labels); !ok {
+		klog.Errorln("Wrong in checking status of ", instance.Name, ", err is ", err)
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+	} else {
+		newStatus := instance.Status.DeepCopy()
+		if err != nil {
+			newStatus.Status = redisv1.StatusKO
+			newStatus.Reason = err.Error()
+		} else {
+			newStatus.Status = redisv1.StatusOK
+			newStatus.Reason = "OK"
+		}
+		//加一个判断看是否需要更新
+		if needUpadteCR(&instance.Status, newStatus) {
+			instance.Status = *newStatus
+			if err := r.Status().Update(context.TODO(), instance); err != nil {
+				klog.Errorln("Wrong in updating status of ", instance.Name, ", err is ", err)
+			}
+		}
+
+	}
+	return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

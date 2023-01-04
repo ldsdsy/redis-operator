@@ -17,6 +17,8 @@ limitations under the License.
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -27,19 +29,18 @@ import (
 type RedisStandaloneSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Name            string            `json:"name"`
-	Image           string            `json:"image"`
-	ImagePullPolicy string            `json:"imagePullPolicy,omitempty"`
-	Version         string            `json:"version"`
-	Configuration   map[string]string `json:"configuration,omitempty"`
-	Password        string            `json:"password,omitempty"`
-	Storage         RedisStorage      `json:"storage,omitempty"`
+	Name            string                      `json:"name"`
+	Image           string                      `json:"image"`
+	ImagePullPolicy corev1.PullPolicy           `json:"imagePullPolicy,omitempty"`
+	Resources       corev1.ResourceRequirements `json:"resources,omitempty"`
+	Storage         RedisStorage                `json:"storage,omitempty"`
+	Configuration   map[string]string           `json:"configuration,omitempty"`
 }
 
 type RedisStorage struct {
-	StorageClass string `json:"storageClass"`
-	Size         string `json:"size"`
-	Retain       bool   `json:"retain"`
+	StorageClass string            `json:"storageClass"`
+	Size         resource.Quantity `json:"size"`
+	Retain       bool              `json:"retain"`
 }
 
 // RedisStandaloneStatus defines the observed state of RedisStandalone
@@ -47,13 +48,13 @@ type RedisStandaloneStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	Status StandaloneStatus `json:"standaloneStatus"`
+	Reason string           `json:"reason"`
 }
 type StandaloneStatus string
 
 const (
-	statusOK       StandaloneStatus = "Healthy"
-	statusKO       StandaloneStatus = "Failed"
-	statusCreating StandaloneStatus = "Creating"
+	StatusOK StandaloneStatus = "Healthy"
+	StatusKO StandaloneStatus = "Failed"
 )
 
 //+kubebuilder:object:root=true
