@@ -137,7 +137,8 @@ func newStatufulSet(standalone redisv1.RedisStandalone, labels map[string]string
 			VolumeClaimTemplates: []corev1.PersistentVolumeClaim{
 				{
 					ObjectMeta: metav1.ObjectMeta{
-						Name: "redis-data",
+						Name:            "redis-data",
+						OwnerReferences: DefaultOwnerReferences(standalone),
 					},
 					Spec: corev1.PersistentVolumeClaimSpec{
 						StorageClassName: &standalone.Spec.Storage.StorageClass,

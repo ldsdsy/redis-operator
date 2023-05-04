@@ -2,3 +2,6 @@
 
 ## 密码
 密码直接放到参数配置里面。一般为了安全性会单独处理密码，存放到 secret 里面，但是这样就需要在启动的时候同时起一个 secret.yaml（secret.yaml 里面存密码，然后再在 crd.yaml 的参数里存 secret 的名称），但是我就想简单明了(偷懒)，一个 yaml 就能启动一个 redis 单机/集群/哨兵集群。
+
+## 配置
+配置也直接放到参数配置里面。一般会存放到 configmap 里面，但是这样就需要在启动的时候同时起一个 configmap.yaml（configmap.yaml 里面存配置，然后再在 crd.yaml 的参数里存 configmap 的名称）。

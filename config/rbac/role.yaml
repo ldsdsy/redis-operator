@@ -8,6 +8,32 @@ rules:
 - apiGroups:
   - redis.my.domain
   resources:
+  - redissentinels
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redis.my.domain
+  resources:
+  - redissentinels/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - redis.my.domain
+  resources:
+  - redissentinels/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - redis.my.domain
+  resources:
   - redisstandalones
   verbs:
   - create

@@ -18,18 +18,31 @@ package v1
 
 import (
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// RedisStandaloneSpec defines the desired state of RedisStandalone
-type RedisStandaloneSpec struct {
+// RedisSentinelSpec defines the desired state of RedisSentinel
+type RedisSentinelSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Name            string                      `json:"name"`
+
+	Name     string       `json:"name"`
+	Redis    RedisSpec    `json:"redis,omitempty"`
+	Sentinel SentinelSpec `json:"sentinel,omitempty"`
+}
+type RedisSpec struct {
+	Replicas        int32                       `json:"replicas"`
+	Image           string                      `json:"image"`
+	ImagePullPolicy corev1.PullPolicy           `json:"imagePullPolicy,omitempty"`
+	Resources       corev1.ResourceRequirements `json:"resources,omitempty"`
+	Storage         Storage                     `json:"storage,omitempty"`
+	Configuration   map[string]string           `json:"configuration,omitempty"`
+}
+type SentinelSpec struct {
+	Replicas        int32                       `json:"replicas"`
 	Image           string                      `json:"image"`
 	ImagePullPolicy corev1.PullPolicy           `json:"imagePullPolicy,omitempty"`
 	Resources       corev1.ResourceRequirements `json:"resources,omitempty"`
@@ -37,47 +50,35 @@ type RedisStandaloneSpec struct {
 	Configuration   map[string]string           `json:"configuration,omitempty"`
 }
 
-type Storage struct {
-	StorageClass string            `json:"storageClass"`
-	Size         resource.Quantity `json:"size"`
-	Retain       bool              `json:"retain"`
-}
-
-// RedisStandaloneStatus defines the observed state of RedisStandalone
-type RedisStandaloneStatus struct {
+// RedisSentinelStatus defines the observed state of RedisSentinel
+type RedisSentinelStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	Status Status `json:"standaloneStatus"`
 	Reason string `json:"reason"`
 }
-type Status string
-
-const (
-	StatusOK Status = "Healthy"
-	StatusKO Status = "Failed"
-)
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// RedisStandalone is the Schema for the redisstandalones API
-type RedisStandalone struct {
+// RedisSentinel is the Schema for the redissentinels API
+type RedisSentinel struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   RedisStandaloneSpec   `json:"spec,omitempty"`
-	Status RedisStandaloneStatus `json:"status,omitempty"`
+	Spec   RedisSentinelSpec   `json:"spec,omitempty"`
+	Status RedisSentinelStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// RedisStandaloneList contains a list of RedisStandalone
-type RedisStandaloneList struct {
+// RedisSentinelList contains a list of RedisSentinel
+type RedisSentinelList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []RedisStandalone `json:"items"`
+	Items           []RedisSentinel `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&RedisStandalone{}, &RedisStandaloneList{})
+	SchemeBuilder.Register(&RedisSentinel{}, &RedisSentinelList{})
 }

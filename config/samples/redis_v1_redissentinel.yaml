@@ -1,0 +1,42 @@
+apiVersion: redis.my.domain/v1
+kind: RedisSentinel
+metadata:
+  name: redissentinel-sample
+spec:
+  name: redis-sentinel
+  redis:
+    replicas: 3
+    image: redis:7.0.6-alpine
+    imagePullPolicy: IfNotPresent
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    storage: 
+      storageClass: managed-nfs-storage
+      size: 1G
+      retain: true
+    configuration: 
+      requirepass: redis
+      daemonize: "no" # 此参数必须为 no，如果为 yes，pod 启动后会里面退出，状态为 competed
+      pidfile: /var/run/redis_6379.pid
+      loglevel: notice
+      databases: "16"
+  sentinel:
+    replicas: 3
+    image: redis:7.0.6-alpine
+    imagePullPolicy: IfNotPresent
+    resources: 
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    storage: 
+      storageClass: managed-nfs-storage
+      size: 1G
+      retain: true

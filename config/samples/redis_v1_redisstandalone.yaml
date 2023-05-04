@@ -7,12 +7,12 @@ spec:
   image: redis:7.0.6-alpine
   imagePullPolicy: IfNotPresent
   resources:
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
   storage: 
     storageClass: managed-nfs-storage
     size: 1G

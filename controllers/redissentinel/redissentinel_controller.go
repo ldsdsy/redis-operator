@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package redisstandalone
+package redissentinel
 
 import (
 	"context"
@@ -30,37 +30,36 @@ import (
 	redisv1 "ldsdsy/redis-operator/api/v1"
 )
 
-// RedisStandaloneReconciler reconciles a RedisStandalone object
-type RedisStandaloneReconciler struct {
+// RedisSentinelReconciler reconciles a RedisSentinel object
+type RedisSentinelReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=redis.my.domain,resources=redisstandalones,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=redis.my.domain,resources=redisstandalones/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=redis.my.domain,resources=redisstandalones/finalizers,verbs=update
+//+kubebuilder:rbac:groups=redis.my.domain,resources=redissentinels,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=redis.my.domain,resources=redissentinels/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=redis.my.domain,resources=redissentinels/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the RedisStandalone object against the actual cluster state, and then
+// the RedisSentinel object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
-func (r *RedisStandaloneReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *RedisSentinelReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
-
-	instance := &redisv1.RedisStandalone{}
+	instance := &redisv1.RedisSentinel{}
 	if err := r.Client.Get(context.TODO(), req.NamespacedName, instance); err != nil {
 		if errors.IsNotFound(err) {
-			klog.Errorln("Not found RedisStandalone: ", req.NamespacedName)
+			klog.Errorln("Not found RedisSentinel: ", req.NamespacedName)
 			return ctrl.Result{}, nil
 		}
-		klog.Errorln("Wrong in getting RedisStandalone: ", req.NamespacedName)
+		klog.Errorln("Wrong in getting RedisSentinel: ", req.NamespacedName)
 		return ctrl.Result{}, err
 	}
 	labels := map[string]string{
@@ -98,8 +97,8 @@ func (r *RedisStandaloneReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *RedisStandaloneReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *RedisSentinelReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&redisv1.RedisStandalone{}).
+		For(&redisv1.RedisSentinel{}).
 		Complete(r)
 }

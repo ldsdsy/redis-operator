@@ -2,6 +2,9 @@
 
 _因为当前的工作主要就是负责 redis-opertaor，所以自己想写一个 operator 可以管理 redis 单机，哨兵，集群三种模式作为个人练习。此代码有参考 https://github.com/ucloud/redis-cluster-operator_
 
+## 设计主旨
+简单明了，一个 crd.yaml 就能拉起一个 redis 单机/集群/哨兵集群。因此没有用单独的 secret.yaml 存放密码，也没用单独的 configmap.yaml 存放配置，都是直接在 crd.yaml 里面配置。
+
 ## 单机模式
 设计的十分简单，sts 启动一个 redis，configMap 保存配置，pvc 持久化数据，svc 用于访问。
 ```

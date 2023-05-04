@@ -191,7 +191,7 @@ func (r *RedisStandaloneReconciler) ServiceNodeport(standalone redisv1.RedisStan
 	return true, nil
 }
 
-func (r *RedisStandaloneReconciler) CheckStatus(standalone redisv1.RedisStandalone, labels map[string]string) (bool, error) {
+func (r *RedisStandaloneReconciler) CheckStatus(standalone redisv1.RedisStandalone) (bool, error) {
 	redisPod := &appv1.StatefulSet{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{
 		Namespace: standalone.Namespace,

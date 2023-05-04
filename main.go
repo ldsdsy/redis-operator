@@ -32,7 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	redisv1 "ldsdsy/redis-operator/api/v1"
-	controllers "ldsdsy/redis-operator/controllers/redisstandalone"
+	redissentinel "ldsdsy/redis-operator/controllers/redissentinel"
+	redisstandalone "ldsdsy/redis-operator/controllers/redisstandalone"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -78,11 +79,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.RedisStandaloneReconciler{
+	if err = (&redisstandalone.RedisStandaloneReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "RedisStandalone")
+		os.Exit(1)
+	}
+	if err = (&redissentinel.RedisSentinelReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "RedisSentinel")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
